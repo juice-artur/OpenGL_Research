@@ -14,8 +14,10 @@ static double deltaTime = 0;
 
 void RenderFPSGraph()
 {
-    ImGui::Begin("FPS Graph");
 
+    ImGui::Begin("FPS Graph", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::SetWindowSize(ImVec2(500, 150));
+    ImGui::SetNextWindowPos(ImVec2(1240 - 500, 0), ImGuiCond_Always);
     ImGui::PlotLines("FPS", values, 120, valuesOffset, nullptr, 0.0f, 100.0f, ImVec2(0, 80));
     float averageFPS = 0.0f;
     float maxFPS = FLT_MIN;
@@ -53,6 +55,7 @@ void RenderImGui()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
 
     RenderFPSGraph();
 
