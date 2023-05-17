@@ -5,14 +5,15 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <iostream>
 
+
+static float values[120] = {};
+static int valuesOffset = 0;
+
+
+
 void RenderFPSGraph()
 {
     ImGui::Begin("FPS Graph");
-
-    static float values[120] = {};
-    static int valuesOffset = 0;
-    values[valuesOffset] = ImGui::GetIO().Framerate;
-    valuesOffset = (valuesOffset + 1) % 120;
 
     ImGui::PlotLines("FPS", values, 120, valuesOffset, nullptr, 0.0f, 100.0f, ImVec2(0, 80));
     float averageFPS = 0.0f;
@@ -84,14 +85,23 @@ int main(void)
     std::cout << "OpenGL " << GLVersion.major << "." << GLVersion.minor << std::endl;
 
     glClearColor(0.5, 1, 0.3, 1);
+    double previousTime = glfwGetTime();
 
     while (!glfwWindowShouldClose(window))
     {
+        double currentTime = glfwGetTime();
+
         glClear(GL_COLOR_BUFFER_BIT);
         RenderImGui();
         glfwSwapBuffers(window);
 
         glfwPollEvents();
+
+        double fps = 1.0 /(currentTime - previousTime);
+        values[valuesOffset] = fps;
+        valuesOffset = (valuesOffset + 1) % 120;
+
+        previousTime = currentTime;
     }
 
     glfwTerminate();
