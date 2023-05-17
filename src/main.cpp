@@ -8,6 +8,7 @@
 
 static float values[120] = {};
 static int valuesOffset = 0;
+static double deltaTime = 0;
 
 
 
@@ -40,6 +41,8 @@ void RenderFPSGraph()
     ImGui::TextColored(
         ImVec4(averageFPS <= 140 ? 1.0 : 0, averageFPS >= 140 ? 1.0 : 0, 0 , 1.0f), "Avg: %.1f", averageFPS);
     ImGui::Text("Min: %.1f", minFPS);
+
+    ImGui::Text("Delta time: %.1f", deltaTime);
 
 
     ImGui::End();
@@ -96,7 +99,7 @@ int main(void)
         glfwSwapBuffers(window);
 
         glfwPollEvents();
-
+        deltaTime = (currentTime - previousTime) * 1000.0;
         double fps = 1.0 /(currentTime - previousTime);
         values[valuesOffset] = fps;
         valuesOffset = (valuesOffset + 1) % 120;
