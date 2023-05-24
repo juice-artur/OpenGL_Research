@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
-#include "Window.h"
+#include "WindowManager.h"
+#include <RenderManager.h>
 
 class Game
 {
@@ -10,7 +11,8 @@ public:
     bool StartUp();
 
 private:
-    Window window;
+    WindowManager WindowManager;
+    RenderManager RenderManager;
 };
 
 

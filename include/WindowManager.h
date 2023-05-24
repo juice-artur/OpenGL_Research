@@ -1,18 +1,18 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef WINDOWMANAGER_H
+#define WINDOWMANAGER_H
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-class Window
+class WindowManager
 {
 public:
     const static int SCREEN_WIDTH = 1920;
     const static int SCREEN_HEIGHT = 1080;
 
-
     bool StartUp();
     void ShutDown();
+    void SwapWindow();
 
 private:
     GLFWwindow* window;

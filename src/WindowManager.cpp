@@ -1,10 +1,10 @@
-#include "Window.h"
+#include "WindowManager.h"
 #include <iostream>
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
-bool Window::CreateWindow()
+bool WindowManager::CreateWindow()
 {
     if (!glfwInit())
     {
@@ -21,13 +21,13 @@ bool Window::CreateWindow()
     return true;
 }
 
-bool Window::CreateGLContext()
+bool WindowManager::CreateGLContext()
 {
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGL())
     {
-         std::cout << "Can't load GLAD!" << std::endl;
+        std::cout << "Can't load GLAD!" << std::endl;
     }
 
     glEnable(GL_CULL_FACE);
@@ -38,7 +38,7 @@ bool Window::CreateGLContext()
     return true;
 }
 
-bool Window::CreateImGuiContext()
+bool WindowManager::CreateImGuiContext()
 {
     ImGuiContext* mGuiContext = ImGui::CreateContext();
     if (mGuiContext == nullptr)
@@ -64,7 +64,7 @@ bool Window::CreateImGuiContext()
     return true;
 }
 
-bool Window::StartUp()
+bool WindowManager::StartUp()
 {
 
     if (!CreateWindow())
@@ -85,7 +85,7 @@ bool Window::StartUp()
     return true;
 }
 
-void Window::ShutDown() 
+void WindowManager::ShutDown()
 {
     ImGui::EndFrame();
     ImGui_ImplOpenGL3_Shutdown();
@@ -94,7 +94,13 @@ void Window::ShutDown()
     glfwTerminate();
 }
 
-bool Window::InitializeOpenGL()
+void WindowManager::SwapWindow()
+{
+
+    glfwSwapBuffers(window);
+}
+
+bool WindowManager::InitializeOpenGL()
 {
     if (!gladLoadGL())
     {
