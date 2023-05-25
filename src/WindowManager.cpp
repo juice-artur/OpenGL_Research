@@ -100,6 +100,11 @@ void WindowManager::SwapWindow()
     glfwSwapBuffers(window);
 }
 
+GLFWwindow* WindowManager::GetWindow() const
+{
+    return this->window;
+}
+
 bool WindowManager::InitializeOpenGL()
 {
     if (!gladLoadGL())

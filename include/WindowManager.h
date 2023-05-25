@@ -14,6 +14,8 @@ public:
     void ShutDown();
     void SwapWindow();
 
+    GLFWwindow* GetWindow() const;
+
 private:
     GLFWwindow* window;
 

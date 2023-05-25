@@ -10,9 +10,12 @@ public:
 
     bool StartUp();
 
+
 private:
     WindowManager WindowManager;
     RenderManager RenderManager;
+
+    void ProcessInput(GLFWwindow* window);
 };
 
 
