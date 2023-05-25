@@ -25,6 +25,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 add_subdirectory(external/glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 
+add_subdirectory(external/tinyobjloader)
+target_link_libraries(${PROJECT_NAME} PRIVATE tinyobjloader)
+
+add_subdirectory(external/glm)
+target_link_libraries(${PROJECT_NAME} PRIVATE glm)
+
 set(IMGUI_INCLUDES
 	external/imgui/imgui.h
 	external/imgui/backends/imgui_impl_glfw.h
