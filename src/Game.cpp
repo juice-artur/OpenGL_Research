@@ -8,7 +8,7 @@ void Game::Run()
     {
         ProcessInput(WindowManager.GetWindow());
 
-        RenderManager.Render();
+        RenderManager.Render(CurentScene.GetMeshes());
     }
 }
 
@@ -25,9 +25,16 @@ bool Game::StartUp()
         printf("Failed to initialize Render manager.\n");
         return false;
     }
+
+    if (!CurentScene.StartUp())
+    {
+        std::cout << "Failed to initialize Scene." << std::endl;
+        return false;
+    }
 }
 
-void Game::ProcessInput(GLFWwindow* window) 
+
+void Game::ProcessInput(GLFWwindow* window)
 {
     ImGuiIO& io = ImGui::GetIO();
     glfwPollEvents();

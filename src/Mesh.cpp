@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include <iostream>
+#include <glad/glad.h>
 
 bool Mesh::LoadFromObj(const char* filename){
     tinyobj::ObjReaderConfig reader_config;
@@ -68,6 +69,43 @@ bool Mesh::LoadFromObj(const char* filename){
             index_offset += fv;
         }
     }
+
+    SetupMesh(); 
     return true;
 
+}
+
+Mesh::Mesh(const char* filename) 
+{
+    LoadFromObj(filename);
+}
+
+void Mesh::SetupMesh() 
+{
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    // Bind Vertex Array Object and VBO in correct order
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    // VBO stuff
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+
+
+    // Vertex position pointer init
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+
+    // Vertex normal pointer init
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+
+    // Vertex texture coord
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+
+
+    // Unbinding VAO
+    glBindVertexArray(0);
 }

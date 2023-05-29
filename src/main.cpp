@@ -1,9 +1,11 @@
 
 #include "Game.h"
-int main(void)
+int main()
 {
     Game game;
     game.StartUp();
     game.Run();
+
+    std::cout << "Suka";
     return 0;
 }
