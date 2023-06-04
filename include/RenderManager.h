@@ -16,7 +16,7 @@ public:
 
     bool StartUp(WindowManager &window);
     void ShutDown(); // TODO:: Cleanup
-    void Render(const std::vector<Mesh>& Meshes);
+    void Render(const std::vector<Mesh>& Meshes, glm::mat4 ViewMatrix, double DeltaTime);
 
 private:
     WindowManager* Window;

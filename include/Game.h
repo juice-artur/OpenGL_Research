@@ -13,14 +13,19 @@ public:
 
     Game(){};
 
+   
 
 private:
     WindowManager WindowManager;
     RenderManager RenderManager;
-    Scene CurentScene;
+    static Scene CurentScene;
+    static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+    void ProcessInput(GLFWwindow* window, double DeltaTime);
 
-    void ProcessInput(GLFWwindow* window);
+    static float LastX;
+    static float LastY;
+
+    static bool FirstMouse;
 };
-
 
 #endif

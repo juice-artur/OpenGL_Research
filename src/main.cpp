@@ -6,6 +6,5 @@ int main()
     game.StartUp();
     game.Run();
 
-    std::cout << "Suka";
     return 0;
 }

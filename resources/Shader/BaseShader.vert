@@ -6,7 +6,10 @@ layout (location = 3) in vec2 vTexCoord;
 
 layout (location = 0) out vec3 outColor;
 
+uniform mat4 ViewMatrix;
+uniform mat4 ProjectionMatrix;
+uniform mat4 Model;
 void main() {
-	gl_Position = vec4(vPosition, 1.0f);
+	gl_Position = ProjectionMatrix * ViewMatrix * Model * vec4(vPosition, 1.0f);
 	outColor = vColor;
 }
