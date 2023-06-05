@@ -17,7 +17,7 @@ void RenderManager::Render(const std::vector<Mesh>& Meshes, glm::mat4 ViewMatrix
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(1.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
     MeshShader.SetMat4("ViewMatrix", ViewMatrix);
     MeshShader.SetMat4("ProjectionMatrix", ProjectionMatrix);

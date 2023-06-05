@@ -46,6 +46,7 @@ bool Game::StartUp()
     }
 
     glfwSetCursorPosCallback(WindowManager.GetWindow(), Game::MouseCallback);
+    return true;
 }
 
 void Game::ProcessInput(GLFWwindow* window, double DeltaTime)
@@ -65,19 +66,19 @@ void Game::ProcessInput(GLFWwindow* window, double DeltaTime)
     const float cameraSpeed = 2.0f;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        CurentScene.MainCamera.ProcessKeyboard(FORWARD, SPEED * DeltaTime);
+        CurentScene.MainCamera.ProcessKeyboard(FORWARD, SPEED * DeltaTime / 1000 );
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        CurentScene.MainCamera.ProcessKeyboard(BACKWARD, SPEED * DeltaTime);
+        CurentScene.MainCamera.ProcessKeyboard(BACKWARD, SPEED * DeltaTime / 1000);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        CurentScene.MainCamera.ProcessKeyboard(LEFT, SPEED * DeltaTime);
+        CurentScene.MainCamera.ProcessKeyboard(LEFT, SPEED * DeltaTime / 1000);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        CurentScene.MainCamera.ProcessKeyboard(RIGHT, SPEED * DeltaTime);
+        CurentScene.MainCamera.ProcessKeyboard(RIGHT, SPEED * DeltaTime / 1000);
     }
 }
 
