@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include <iostream>
 #include <glad/glad.h>
+#include <glm/ext/matrix_transform.hpp>
 
 bool Mesh::LoadFromObj(const char* filename){
     tinyobj::ObjReaderConfig reader_config;
@@ -54,16 +55,16 @@ bool Mesh::LoadFromObj(const char* filename){
                     new_vert.normal.z = nz;
                 }
 
-                if (idx.texcoord_index >= 0)
-                {
-                    tinyobj::real_t ux = attrib.texcoords[2 * idx.texcoord_index + 0];
-                    tinyobj::real_t uy = attrib.texcoords[2 * idx.texcoord_index + 1];
+                //if (idx.texcoord_index >= 0)
+                //{
+                //    tinyobj::real_t ux = attrib.texcoords[2 * idx.texcoord_index + 0];
+                //    tinyobj::real_t uy = attrib.texcoords[2 * idx.texcoord_index + 1];
 
-                    new_vert.uv.x = ux;
-                    new_vert.uv.y = 1 - uy;
-                }
+                //    new_vert.uv.x = ux;
+                //    new_vert.uv.y = 1 - uy;
+                //}
 
-                new_vert.color = new_vert.normal;
+                //new_vert.color = new_vert.normal;
                 vertices.push_back(new_vert);
             }
             index_offset += fv;
@@ -71,6 +72,10 @@ bool Mesh::LoadFromObj(const char* filename){
     }
 
     SetupMesh(); 
+    
+    ModelMatrix = CalculateModelMatrix();
+
+
     return true;
 
 }
@@ -78,6 +83,28 @@ bool Mesh::LoadFromObj(const char* filename){
 Mesh::Mesh(const char* filename) 
 {
     LoadFromObj(filename);
+}
+
+void Mesh::SetColor(glm::vec4 Color) 
+{
+    this->Color = Color;
+}
+
+void Mesh::SetPosition(glm::vec3 Position) 
+{
+    this->Position = Position;
+    ModelMatrix = CalculateModelMatrix();
+}
+
+glm::mat4 Mesh::GetModelMatrix()
+{
+    return ModelMatrix;
+}
+
+void Mesh::Move(glm::vec3 Offset) 
+{
+    Position += Offset;
+    ModelMatrix = CalculateModelMatrix();
 }
 
 void Mesh::SetupMesh() 
@@ -102,10 +129,25 @@ void Mesh::SetupMesh()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 
     // Vertex texture coord
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+    //glEnableVertexAttribArray(2);
+    //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
 
 
     // Unbinding VAO
     glBindVertexArray(0);
+}
+
+glm::mat4 Mesh::CalculateModelMatrix()
+{
+    glm::mat4 model(1.0f);  
+
+    model = glm::translate(model, Position);
+
+    model = glm::rotate(model, glm::radians(Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    model = glm::scale(model, Scale);
+
+    return model;
 }

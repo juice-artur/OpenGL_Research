@@ -11,7 +11,10 @@ source_group("src" FILES ${CPP_FILES})
 file(GLOB_RECURSE HPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 source_group("include" FILES ${HPP_FILES})
 
-add_executable(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES})
+file(GLOB_RECURSE SHADERS ${CMAKE_CURRENT_SOURCE_DIR}/resources/Shader/*)
+source_group("Shader" FILES ${SHADERS})
+
+add_executable(${PROJECT_NAME} ${CPP_FILES} ${HPP_FILES}  ${SHADERS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)

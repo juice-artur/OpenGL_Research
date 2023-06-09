@@ -22,10 +22,12 @@ void RenderManager::Render(const std::vector<Mesh>& Meshes, glm::mat4 ViewMatrix
     MeshShader.SetMat4("ViewMatrix", ViewMatrix);
     MeshShader.SetMat4("ProjectionMatrix", ProjectionMatrix);
 
+
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "Draw Mesh");
     for (auto curentMesh : Meshes)
     {
-        MeshShader.SetMat4("Model", glm::mat4(1));
+        MeshShader.SetMat4("Model", curentMesh.GetModelMatrix());
+        MeshShader.SetVec4("Color", curentMesh.Color);
         DrawMesh(curentMesh);
     }
     glPopDebugGroup();
