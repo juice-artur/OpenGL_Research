@@ -2,7 +2,14 @@
 
 bool Scene::StartUp()
 {
-    Meshes.push_back("../resources/bunny/bunny.obj");
+    Mesh Bunny("../resources/bunny/bunny.obj");
+    Bunny.SetPosition({5, 0, 5});
+    Meshes.push_back(Bunny);
+    Mesh Cube("../resources/Cube/cube.obj");
+    Cube.ScaleMesh({10, 0.2, 10});
+    Cube.SetPosition({5, -1, 5});
+    Cube.SetColor({0.0f, 0.3f, 0.8f, 1.0f});
+    Meshes.push_back(Cube);
     MainCamera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
     return true;
 }

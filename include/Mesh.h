@@ -26,6 +26,7 @@ struct Mesh
     void SetColor(glm::vec4 Color);
 
     void SetPosition(glm::vec3 Position);
+    void ScaleMesh(glm::vec3 Scale);
     glm::mat4 GetModelMatrix();
     
 

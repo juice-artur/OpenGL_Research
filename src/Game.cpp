@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <iostream>
 #include <imgui.h>
+#include <Constants.h>
 
 float Game::LastX = 0;
 float Game::LastY = 0;
@@ -66,7 +67,7 @@ void Game::ProcessInput(GLFWwindow* window, double DeltaTime)
     const float cameraSpeed = 2.0f;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        CurentScene.MainCamera.ProcessKeyboard(FORWARD, SPEED * DeltaTime / 1000 );
+        CurentScene.MainCamera.ProcessKeyboard(FORWARD, SPEED * DeltaTime / 1000);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
@@ -96,6 +97,19 @@ void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos)
 
     LastX = xpos;
     LastY = ypos;
+
+    double cursorX, cursorY;
+    glfwGetCursorPos(window, &cursorX, &cursorY);
+
+    if (cursorX < 0.0 || cursorX >= GLOBAL_CONSTANTS::SCREEN_WIDTH || cursorY < 0.0 || cursorY >= GLOBAL_CONSTANTS::SCREEN_HEIGHT)
+    {
+        double centerX = GLOBAL_CONSTANTS::SCREEN_WIDTH / 2.0;
+        double centerY = GLOBAL_CONSTANTS::SCREEN_HEIGHT / 2.0;
+        glfwSetCursorPos(window, centerX, centerY);
+
+        LastX = centerX;
+        LastY = centerY;
+    }
 
     CurentScene.MainCamera.ProcessMouseMovement(xoffset, yoffset);
 }

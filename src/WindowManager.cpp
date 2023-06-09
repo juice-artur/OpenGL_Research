@@ -3,6 +3,7 @@
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
+#include <Constants.h>
 
 bool WindowManager::CreateWindow()
 {
@@ -11,7 +12,7 @@ bool WindowManager::CreateWindow()
         return false;
     }
 
-    window = glfwCreateWindow(1240, 980, "Hello Triangle", NULL, NULL);
+    window = glfwCreateWindow(GLOBAL_CONSTANTS::SCREEN_WIDTH, GLOBAL_CONSTANTS::SCREEN_WIDTH, "Hello Triangle", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -34,7 +35,8 @@ bool WindowManager::CreateGLContext()
     glEnable(GL_FRAMEBUFFER_SRGB);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    glViewport(0, 0, GLOBAL_CONSTANTS::SCREEN_WIDTH, GLOBAL_CONSTANTS::SCREEN_HEIGHT);
+
     return true;
 }
 
@@ -81,6 +83,7 @@ bool WindowManager::StartUp()
     {
         return false;
     }
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     return true;
 }

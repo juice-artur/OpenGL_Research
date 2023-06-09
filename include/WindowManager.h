@@ -7,9 +7,6 @@
 class WindowManager
 {
 public:
-    const static int SCREEN_WIDTH = 1920;
-    const static int SCREEN_HEIGHT = 1080;
-
     bool StartUp();
     void ShutDown();
     void SwapWindow();

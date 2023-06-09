@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 #include <backends/imgui_impl_opengl3.h>
+#include <Constants.h>
 
 bool RenderManager::StartUp(WindowManager& WindowManager)
 {
@@ -17,11 +18,14 @@ void RenderManager::Render(const std::vector<Mesh>& Meshes, glm::mat4 ViewMatrix
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+    glEnable(GL_DEPTH_TEST);
+
+
+    glm::mat4 ProjectionMatrix =
+        glm::perspective(glm::radians(45.0f), (float)GLOBAL_CONSTANTS::SCREEN_WIDTH / (float)GLOBAL_CONSTANTS::SCREEN_HEIGHT, 0.1f, 100.0f);
 
     MeshShader.SetMat4("ViewMatrix", ViewMatrix);
     MeshShader.SetMat4("ProjectionMatrix", ProjectionMatrix);
-
 
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "Draw Mesh");
     for (auto curentMesh : Meshes)
@@ -32,11 +36,10 @@ void RenderManager::Render(const std::vector<Mesh>& Meshes, glm::mat4 ViewMatrix
     }
     glPopDebugGroup();
 
-
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "DrawUI");
     ImGui::Begin("FPS Graph", nullptr);
     ImGui::SetWindowSize(ImVec2(500, 150));
-    ImGui::SetNextWindowPos(ImVec2(1240 - 500, 0), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(GLOBAL_CONSTANTS::SCREEN_WIDTH - 500, 0), ImGuiCond_Always);
     ImGui::Text("Max: %.1f", DeltaTime);
     ImGui::End();
     ImGui::EndFrame();
