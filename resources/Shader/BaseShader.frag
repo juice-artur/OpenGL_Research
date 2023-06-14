@@ -8,6 +8,5 @@ uniform vec4 Color;
 
 void main()
 {
-	//return color
 	outFragColor = Color;
 }

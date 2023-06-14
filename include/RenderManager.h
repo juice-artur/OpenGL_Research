@@ -6,6 +6,7 @@
 #include <WindowManager.h>
 #include "Mesh.h"
 #include <Shader.h>
+#include <Light.h>
 
 class RenderManager
 {
@@ -14,7 +15,7 @@ public:
 
     bool StartUp(WindowManager &window);
     void ShutDown(); // TODO:: Cleanup
-    void Render(const std::vector<Mesh>& Meshes, glm::mat4 ViewMatrix, double DeltaTime);
+    void Render(const std::vector<Mesh>& Meshes, const std::vector<Light>& Lights, glm::mat4 ViewMatrix, double DeltaTime);
 
 private:
     WindowManager* Window;

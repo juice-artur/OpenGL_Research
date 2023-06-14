@@ -18,7 +18,7 @@ void Game::Run()
         double CurrentTime = glfwGetTime();
         ProcessInput(WindowManager.GetWindow(), DeltaTime);
 
-        RenderManager.Render(CurentScene.GetMeshes(), CurentScene.MainCamera.GetViewMatrix(), DeltaTime);
+        RenderManager.Render(CurentScene.GetMeshes(), CurentScene.GetLights(), CurentScene.MainCamera.GetViewMatrix(), DeltaTime);
 
         DeltaTime = (CurrentTime - PreviousTime) * 1000.0;
 
