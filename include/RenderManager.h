@@ -13,13 +13,17 @@ class RenderManager
 public:
     RenderManager(){};
 
-    bool StartUp(WindowManager &window);
-    void ShutDown(); // TODO:: Cleanup
-    void Render(const std::vector<Mesh>& Meshes, const std::vector<Light>& Lights, glm::mat4 ViewMatrix, double DeltaTime);
+    bool StartUp(WindowManager& window);
+    void ShutDown();  // TODO:: Cleanup
+    void Render(const std::vector<Mesh>& Meshes, const std::vector<Light>& Lights, glm::mat4 ViewMatrix, glm::vec3 CameraPosition,
+        double DeltaTime);
 
 private:
+    unsigned int gBuffer;
+    unsigned int gPosition, gNormal, gColor;
     WindowManager* Window;
-    Shader MeshShader;
+    Shader GeometryPassShader;
+    Shader LightPassShader;
     void DrawMesh(Mesh mesh);
 };
 #endif

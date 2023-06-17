@@ -1,11 +1,8 @@
 #include "Light.h"
 
 
-Light::Light(Mesh _Mesh, glm::vec3 Position, glm::vec4 Color)
+Light::Light(Mesh _Mesh, glm::vec3 Position, glm::vec4 Color) : _Mesh(_Mesh), Position(Position), Color(Color)
 {
-    this->_Mesh = _Mesh;
-    this->Position = Position;
-    this->Color = Color;
     this->Linear = 0.7;
     this->Quadratic = 1.8;
     const float Constant = 1.0;
@@ -15,10 +12,8 @@ Light::Light(Mesh _Mesh, glm::vec3 Position, glm::vec4 Color)
 }
 
 Light::Light(Mesh _Mesh, glm::vec3 Position, glm::vec4 Color, float Linear, float Quadratic)
+    : _Mesh(_Mesh), Position(Position), Color(Color)
 {
-    this->_Mesh = _Mesh;
-    this->Position = Position;
-    this->Color = Color;
     this->Linear = Linear;
     this->Quadratic = Quadratic;
     const float Constant = 1.0;
@@ -34,12 +29,27 @@ void Light::SetMesh(Mesh _Mesh)
     this->_Mesh.SetColor(this->Color);
 }
 
-glm::vec3 Light::GetPosition()
+glm::vec3 Light::GetPosition() const
 {
     return Position;
 }
 
-glm::vec4 Light::GetColor()
+glm::vec4 Light::GetColor() const
 {
     return Color;
+}
+
+float Light::GetLinear() const
+{
+    return Linear;
+}
+
+float Light::GetQuadratic() const
+{
+    return Quadratic;
+}
+
+float Light::GetRadius() const
+{
+    return Radius;
 }
