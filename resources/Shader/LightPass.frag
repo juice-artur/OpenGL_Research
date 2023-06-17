@@ -22,28 +22,32 @@ void main()
 {             
     vec3 FragPos = texture(gPosition, TexCoords).rgb;
     vec3 Normal = texture(gNormal, TexCoords).rgb;
-    vec3 _C = texture(gColor, TexCoords).rgb;
+    vec3 Color = texture(gColor, TexCoords).rgb;
     vec3 viewDir  = normalize(viewPos - FragPos);
 
-    vec3 lighting  = _C;
+    vec3 ambient = 0.05 * Color;
+    vec3 lighting = vec3(0);
 
-    for(int i = 0; i < NR_LIGHTS; ++i)
-    {
+
        
-        float distance = length(lights[i].Position - FragPos);
-        if(distance < lights[i].Radius)
-        {
-            vec3 lightDir = normalize(lights[i].Position - FragPos);
-             vec3 diffuse = max(dot(Normal, lightDir), 0.0) * _C * lights[i].Color;
+        float distance = length(lights[0].Position - FragPos);
+        
+             vec3 lightDir = normalize(lights[0].Position - FragPos);
 
+             float diff = max(dot(lightDir, Normal), 0.0);
+             vec3 diffuse = diff * Color;
+
+             vec3 reflectDir = reflect(-lightDir, Normal);
+             float spec = 0.0;
             vec3 halfwayDir = normalize(lightDir + viewDir);  
-            float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
-            
-            float attenuation = 1.0 / (1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
-            diffuse *= attenuation;
-            lighting += diffuse;
-        }
-    }    
 
-    FragColor =vec4(_C, 1.0);
+                spec = pow(max(dot(Normal, halfwayDir), 0.0), 32.0);
+                 vec3 specular = vec3(0.3) * spec;
+            
+            float attenuation = 1.0 / (1.0 + lights[0].Linear * distance + lights[0].Quadratic * distance * distance);
+            diffuse *= attenuation;
+            lighting += diffuse + spec;
+        
+
+    FragColor =  vec4(ambient + diffuse + specular, 1.0);
 }

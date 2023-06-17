@@ -1,11 +1,13 @@
 #version 460
 layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec3 vNormal;
-layout (location = 2) in vec3 vColor;
+
 
 out vec3 FragPos;
 out vec3 outColor;
 out vec3 Normal;
+
+uniform vec4 Color;
 
 uniform mat4 ViewMatrix;
 uniform mat4 ProjectionMatrix;
@@ -20,7 +22,7 @@ void main() {
     Normal = normalMatrix * vNormal;
 
 
-	outColor = vec3(1);
+	outColor = vec3(Color);
 
 	gl_Position = ProjectionMatrix * ViewMatrix * worldPos;
 }
