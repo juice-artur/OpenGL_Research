@@ -98,6 +98,7 @@ void RenderManager::Render(
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     LightPassShader.Use();
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gPosition);
     glActiveTexture(GL_TEXTURE1);
@@ -120,11 +121,13 @@ void RenderManager::Render(
     LightPassShader.SetVec3("viewPos", CameraPosition);
 
     glPopDebugGroup();
-    //glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    //glBlitFramebuffer(0, 0, GLOBAL_CONSTANTS::SCREEN_WIDTH, GLOBAL_CONSTANTS::SCREEN_HEIGHT, 0, 0, GLOBAL_CONSTANTS::SCREEN_WIDTH,
-    //    GLOBAL_CONSTANTS::SCREEN_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBlitFramebuffer(0, 0, GLOBAL_CONSTANTS::SCREEN_WIDTH, GLOBAL_CONSTANTS::SCREEN_HEIGHT, 0, 0, GLOBAL_CONSTANTS::SCREEN_WIDTH,
+        GLOBAL_CONSTANTS::SCREEN_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     unsigned int quadVAO = 0;
     unsigned int quadVBO;
@@ -150,6 +153,8 @@ void RenderManager::Render(
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
+
+
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "DrawUI");
     ImGui::Begin("FPS Graph", nullptr);
     ImGui::SetWindowSize(ImVec2(500, 150));
