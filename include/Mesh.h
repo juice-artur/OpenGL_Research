@@ -12,8 +12,9 @@ struct Vertex
     // glm::vec2 uv;
 };
 
-struct Mesh
+class  Mesh
 {
+public:
     std::vector<Vertex> vertices;
 
     glm::vec4 Color = {0.0f, 1.0f, 0.0f, 1.0f};
@@ -22,7 +23,7 @@ struct Mesh
 
     bool LoadFromObj(const char* filename);
     Mesh(const char* filename);
-
+   // Mesh();
     void SetColor(glm::vec4 Color);
 
     void SetPosition(glm::vec3 Position);
