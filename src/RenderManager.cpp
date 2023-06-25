@@ -50,7 +50,7 @@ bool RenderManager::StartUp(WindowManager& WindowManager)
     textureName = "gColor";
     glObjectLabel(GL_TEXTURE, gColor, -1, textureName);
 
-    textureName = "MyTexture";
+    textureName = "gNormal";
     glObjectLabel(GL_TEXTURE, gNormal, -1, textureName);
 
     unsigned int attachments[3] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
