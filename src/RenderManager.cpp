@@ -11,10 +11,13 @@ bool RenderManager::StartUp(WindowManager& WindowManager)
     this->Window = &WindowManager;
     GeometryPassShader = Shader("../resources/Shader/GeometryPass.vert", "../resources/Shader/GeometryPass.frag");
     LightPassShader = Shader("../resources/Shader/LightPass.vert", "../resources/Shader/LightPass.frag");
+    ShadowPassShader = Shader("../resources/Shader/ShadowPass.vert", "../resources/Shader/ShadowPass.frag",
+        "../resources/Shader/ShadowPass.geom");
     LightPassShader.Use();
     LightPassShader.SetInt("gPosition", 0);
     LightPassShader.SetInt("gNormal", 1);
     LightPassShader.SetInt("gColor", 2);
+    LightPassShader.SetInt("shadowCubemap", 3);
 
     glGenFramebuffers(1, &gBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -47,7 +50,7 @@ bool RenderManager::StartUp(WindowManager& WindowManager)
     textureName = "gColor";
     glObjectLabel(GL_TEXTURE, gColor, -1, textureName);
 
-    textureName = "MyTexture";
+    textureName = "gNormal";
     glObjectLabel(GL_TEXTURE, gNormal, -1, textureName);
 
     unsigned int attachments[3] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
@@ -61,6 +64,29 @@ bool RenderManager::StartUp(WindowManager& WindowManager)
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) std::cout << "Framebuffer not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+    glGenFramebuffers(1, &shadowMapFBO);
+
+    glGenTextures(1, &shadowCubemap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, shadowCubemap);
+    for (unsigned int i = 0; i < 6; ++i)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowCubemap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glEnable(GL_CULL_FACE);
     return true;
 }
 
@@ -72,15 +98,13 @@ void RenderManager::Render(
 
     glEnable(GL_DEPTH_TEST);
 
-    glm::mat4 ProjectionMatrix =
-        glm::perspective(glm::radians(45.0f), (float)GLOBAL_CONSTANTS::SCREEN_WIDTH / (float)GLOBAL_CONSTANTS::SCREEN_HEIGHT, 0.1f, 100.0f);
 
+            glm::mat4 projection =
+        glm::perspective(glm::radians(45.0f), (float)GLOBAL_CONSTANTS::SCREEN_WIDTH/ (float)GLOBAL_CONSTANTS::SCREEN_HEIGHT, 0.1f, 100.0f);
 
     GeometryPassShader.Use();
     GeometryPassShader.SetMat4("ViewMatrix", ViewMatrix);
-    GeometryPassShader.SetMat4("ProjectionMatrix", ProjectionMatrix);
-
-
+    GeometryPassShader.SetMat4("ProjectionMatrix", projection);
 
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "GeometryPass");
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -94,40 +118,74 @@ void RenderManager::Render(
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glPopDebugGroup();
 
+    glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "ShadowPass");
+    float near_plane = 1.0f;
+    float far_plane = 25.0f;
+    glm::mat4 shadowProj = glm::perspective(
+        glm::radians(90.0f), (float)1024 / (float)1024, near_plane, far_plane);
+    std::vector<glm::mat4> shadowTransforms;
+    shadowTransforms.push_back(shadowProj * glm::lookAt(Lights[0].GetPosition(), Lights[0].GetPosition() + glm::vec3(1.0f, 0.0f, 0.0f),
+                                                glm::vec3(0.0f, -1.0f, 0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(Lights[0].GetPosition(), Lights[0].GetPosition() + glm::vec3(-1.0f, 0.0f, 0.0f),
+                                                glm::vec3(0.0f, -1.0f, 0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(Lights[0].GetPosition(), Lights[0].GetPosition() + glm::vec3(0.0f, 1.0f, 0.0f),
+                                                glm::vec3(0.0f, 0.0f, 1.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(Lights[0].GetPosition(), Lights[0].GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f),
+                                                glm::vec3(0.0f, 0.0f, -1.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(Lights[0].GetPosition(), Lights[0].GetPosition() + glm::vec3(0.0f, 0.0f, 1.0f),
+                                                glm::vec3(0.0f, -1.0f, 0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(Lights[0].GetPosition(), Lights[0].GetPosition() + glm::vec3(0.0f, 0.0f, -1.0f),
+                                                glm::vec3(0.0f, -1.0f, 0.0f)));
+
+    glViewport(0, 0, 1024, 1024);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glCullFace(GL_FRONT);
+    ShadowPassShader.Use();
+    for (unsigned int i = 0; i < 6; ++i)
+    {
+        ShadowPassShader.SetMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+    }
+    ShadowPassShader.SetFloat("far_plane", far_plane);
+    ShadowPassShader.SetVec3("lightPos", Lights[0].GetPosition());
+
+    for (auto curentMesh : Meshes)
+    {
+        ShadowPassShader.SetMat4("Model", curentMesh.GetModelMatrix());
+
+        glBindVertexArray(curentMesh.VAO);
+        glDrawArrays(GL_TRIANGLES, 0, (GLsizei)curentMesh.vertices.size());
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glCullFace(GL_BACK);
+    glPopDebugGroup();
+
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "LightPass");
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     LightPassShader.Use();
-
+    glViewport(0, 0, GLOBAL_CONSTANTS::SCREEN_WIDTH, GLOBAL_CONSTANTS::SCREEN_HEIGHT);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gPosition);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, gNormal);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, gColor);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, shadowCubemap);
 
-    for (unsigned int i = 0; i < Lights.size(); i++)
-    {
-        LightPassShader.SetVec3("lights[" + std::to_string(i) + "].Position", Lights[i].GetPosition());
-        LightPassShader.SetVec4("lights[" + std::to_string(i) + "].Color", Lights[i].GetColor());
 
-        LightPassShader.SetFloat("lights[" + std::to_string(i) + "].Linear", Lights[i].GetLinear());
-        LightPassShader.SetFloat("lights[" + std::to_string(i) + "].Quadratic", Lights[i].GetQuadratic());
-
-        const float maxBrightness = std::fmaxf(std::fmaxf(Lights[i].GetColor().r, Lights[i].GetColor().g), Lights[i].GetColor().b);
-        float radius = Lights[i].GetRadius();
-        LightPassShader.SetFloat("lights[" + std::to_string(i) + "].Radius", radius);
-    }
+    LightPassShader.SetVec3("lightPos", Lights[0].GetPosition());
     LightPassShader.SetVec3("viewPos", CameraPosition);
-
-    glPopDebugGroup();
-
+    LightPassShader.SetFloat("far_plane", far_plane);
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glBlitFramebuffer(0, 0, GLOBAL_CONSTANTS::SCREEN_WIDTH, GLOBAL_CONSTANTS::SCREEN_HEIGHT, 0, 0, GLOBAL_CONSTANTS::SCREEN_WIDTH,
         GLOBAL_CONSTANTS::SCREEN_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glPopDebugGroup();
 
     unsigned int quadVAO = 0;
     unsigned int quadVBO;
@@ -153,7 +211,6 @@ void RenderManager::Render(
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
-
 
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "DrawUI");
     ImGui::Begin("FPS Graph", nullptr);

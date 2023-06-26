@@ -19,11 +19,12 @@ public:
         double DeltaTime);
 
 private:
-    unsigned int gBuffer;
-    unsigned int gPosition, gNormal, gColor;
+    unsigned int gBuffer, shadowMapFBO;
+    unsigned int gPosition, gNormal, gColor, shadowCubemap;
     WindowManager* Window;
     Shader GeometryPassShader;
     Shader LightPassShader;
+    Shader ShadowPassShader;
     void DrawMesh(Mesh mesh);
 };
 #endif
