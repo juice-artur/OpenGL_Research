@@ -54,12 +54,8 @@ void main()
     vec3 viewDir  = normalize(viewPos - FragPos);
 
     vec3 lighting = vec3(0);  
-   float distance = length(lightPos - FragPos);
+    float distance = length(lightPos - FragPos);
         
-
-
-
-
     vec3 lightColor = vec3(0.3);
 
     vec3 ambient = 0.3 * Color;
