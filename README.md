@@ -10,5 +10,7 @@ Screenshots
 
 Features
 ------
-Camera :
-- [X] Movements
+- [x] Camera :
+  - [X] Movements
+- [ ] Material system
+- [ ] PBR
