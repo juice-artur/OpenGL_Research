@@ -109,11 +109,13 @@ void RenderManager::Render(
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "GeometryPass");
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    for (auto curentMesh : Meshes)
+    for (auto currentMesh : Meshes)
     {
-        GeometryPassShader.SetMat4("Model", curentMesh.GetModelMatrix());
-        GeometryPassShader.SetVec4("Color", curentMesh.Color);
-        DrawMesh(curentMesh);
+      //  Material currentMaterial = currentMesh.GetMaterial();
+
+        GeometryPassShader.SetMat4("Model", currentMesh.GetModelMatrix());
+        GeometryPassShader.SetVec4("Color", currentMesh.Color);
+        DrawMesh(currentMesh);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glPopDebugGroup();

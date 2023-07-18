@@ -3,6 +3,10 @@
 #include <glad/glad.h>
 #include <glm/ext/matrix_transform.hpp>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#include <format>
+
 bool Mesh::LoadFromObj(const char* filename)
 {
     tinyobj::ObjReaderConfig reader_config;
@@ -24,7 +28,7 @@ bool Mesh::LoadFromObj(const char* filename)
 
     auto& attrib = reader.GetAttrib();
     auto& shapes = reader.GetShapes();
-    auto& materials = reader.GetMaterials();
+    auto& objMaterials = reader.GetMaterials();
 
     for (size_t s = 0; s < shapes.size(); s++)
     {
@@ -56,20 +60,31 @@ bool Mesh::LoadFromObj(const char* filename)
                     new_vert.normal.z = nz;
                 }
 
-                // if (idx.texcoord_index >= 0)
-                //{
-                //     tinyobj::real_t ux = attrib.texcoords[2 * idx.texcoord_index + 0];
-                //     tinyobj::real_t uy = attrib.texcoords[2 * idx.texcoord_index + 1];
+                if (idx.texcoord_index >= 0)
+                {
+                    tinyobj::real_t ux = attrib.texcoords[2 * idx.texcoord_index + 0];
+                    tinyobj::real_t uy = attrib.texcoords[2 * idx.texcoord_index + 1];
 
-                //    new_vert.uv.x = ux;
-                //    new_vert.uv.y = 1 - uy;
-                //}
+                    new_vert.uv.x = ux;
+                    new_vert.uv.y = 1 - uy;
+                }
 
                 // new_vert.color = new_vert.normal;
                 vertices.push_back(new_vert);
             }
             index_offset += fv;
         }
+    }
+
+    for (const auto& material : objMaterials)
+    {
+        Material newMaterial;
+        newMaterial.diffuseTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.diffuse_texname));
+        newMaterial.normalTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.normal_texname));
+        newMaterial.metallicTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.metallic_texname));
+        newMaterial.roughnessTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.roughness_texname));
+
+        materials.push_back(newMaterial);
     }
 
     SetupMesh();
@@ -153,4 +168,33 @@ glm::mat4 Mesh::CalculateModelMatrix()
     model = glm::scale(model, Scale);
 
     return model;
+}
+
+unsigned int Mesh::LoadTexture(const std::string& texturePath)
+{
+    unsigned int textureID;
+    int width, height, numChannels;
+    unsigned char* image = stbi_load(texturePath.c_str(), &width, &height, &numChannels, 0);
+    if (image)
+    {
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // Set texture wrapping and filtering options if needed
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(image);
+    }
+    else
+    {
+        std::cerr << "Failed to load texture: " << texturePath << std::endl;
+        textureID = 0;  // Use 0 as the default texture ID for error cases
+    }
+
+    return textureID;
 }
