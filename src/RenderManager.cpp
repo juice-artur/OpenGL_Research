@@ -111,11 +111,19 @@ void RenderManager::Render(
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (auto currentMesh : Meshes)
     {
-      //  Material currentMaterial = currentMesh.GetMaterial();
+        Material currentMaterial;
+        if (!currentMesh.materials.empty())
+        {
+            currentMaterial = currentMesh.materials[0];
+        }
+        else
+        {
+            currentMaterial = Material{};
+        }
 
         GeometryPassShader.SetMat4("Model", currentMesh.GetModelMatrix());
         GeometryPassShader.SetVec4("Color", currentMesh.Color);
-        DrawMesh(currentMesh);
+        DrawMesh(currentMesh, currentMaterial);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glPopDebugGroup();
@@ -230,9 +238,13 @@ void RenderManager::Render(
     Window->SwapWindow();
 }
 
-void RenderManager::DrawMesh(Mesh mesh)
+void RenderManager::DrawMesh(Mesh mesh, Material curentMaterial)
 {
     GeometryPassShader.Use();
+    GeometryPassShader.SetInt("DiffuseTexture", 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, curentMaterial.diffuseTextureID);
+
     glBindVertexArray(mesh.VAO);
     glDrawArrays(GL_TRIANGLES, 0, (GLsizei)mesh.vertices.size());
 }
