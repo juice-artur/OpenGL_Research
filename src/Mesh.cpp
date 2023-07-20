@@ -75,16 +75,52 @@ bool Mesh::LoadFromObj(const char* filename)
             index_offset += fv;
         }
     }
-
-    for (const auto& material : objMaterials)
+    if (!objMaterials.empty())
     {
-        Material newMaterial;
-        newMaterial.diffuseTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.diffuse_texname));
-        newMaterial.normalTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.normal_texname));
-        newMaterial.metallicTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.metallic_texname));
-        newMaterial.roughnessTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.roughness_texname));
+        for (const auto& material : objMaterials)
+        {
+            Material newMaterial;
+            newMaterial.diffuseTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.diffuse_texname));
+            newMaterial.normalTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.normal_texname));
+            newMaterial.metallicTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.metallic_texname));
+            newMaterial.roughnessTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.roughness_texname));
 
-        materials.push_back(newMaterial);
+            materials = newMaterial;
+        }
+    }
+    else
+    {
+
+        GLuint textureID;
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        unsigned char whitePixel[] = {255, 255, 255, 255};
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, whitePixel);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        GLuint samplerID;
+        glGenSamplers(1, &samplerID);
+        glBindSampler(0, samplerID);
+
+        glSamplerParameteri(samplerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glSamplerParameteri(samplerID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glSamplerParameteri(samplerID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glSamplerParameteri(samplerID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        Material newMaterial;
+        newMaterial.diffuseTextureID = textureID;
+       // newMaterial.normalTextureID = textureID;
+      //  newMaterial.metallicTextureID = textureID;
+      //  newMaterial.roughnessTextureID = textureID;
+
+        materials = newMaterial;
     }
 
     SetupMesh();

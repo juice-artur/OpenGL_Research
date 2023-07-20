@@ -25,7 +25,7 @@ class  Mesh
 {
 public:
     std::vector<Vertex> vertices;
-    std::vector<Material> materials;
+    Material materials;
 
     glm::vec4 Color = {0.0f, 1.0f, 0.0f, 1.0f};
 

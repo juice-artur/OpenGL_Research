@@ -111,19 +111,9 @@ void RenderManager::Render(
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (auto currentMesh : Meshes)
     {
-        Material currentMaterial;
-        if (!currentMesh.materials.empty())
-        {
-            currentMaterial = currentMesh.materials[0];
-        }
-        else
-        {
-            currentMaterial = Material{};
-        }
-
         GeometryPassShader.SetMat4("Model", currentMesh.GetModelMatrix());
         GeometryPassShader.SetVec4("Color", currentMesh.Color);
-        DrawMesh(currentMesh, currentMaterial);
+        DrawMesh(currentMesh, currentMesh.materials);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glPopDebugGroup();
