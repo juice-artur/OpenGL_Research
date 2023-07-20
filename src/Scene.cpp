@@ -10,6 +10,10 @@ bool Scene::StartUp()
     Cube.SetPosition({-1.0f, 0.0f, 2.0});
     Cube.SetColor({0.0f, 0.3f, 0.8f, 1.0f});
     Meshes.push_back(Cube);
+    Mesh thorHammer("../resources/AirgunHaenel/Air_Gun-Wavefront OBJ.obj");
+    thorHammer.SetPosition({3.0f, 3.0f, 2.0});
+    thorHammer.SetColor({0.0f, 0.3f, 0.8f, 1.0f});
+    Meshes.push_back(thorHammer);
 
     Light PointLight(Mesh("../resources/Sphere/Sphere.obj"), {-5.0f, 5.0f, 8.0f}, {1.0f, 1.0f, 1.0, 1.0f});
     Lights.push_back(PointLight);

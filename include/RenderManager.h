@@ -25,6 +25,6 @@ private:
     Shader GeometryPassShader;
     Shader LightPassShader;
     Shader ShadowPassShader;
-    void DrawMesh(Mesh mesh);
+    void DrawMesh(Mesh mesh, Material curentMaterial);
 };
 #endif
