@@ -12,5 +12,5 @@ Features
 ------
 - [x] Camera :
   - [X] Movements
-- [ ] Material system
+- [x] Material system
 - [ ] PBR

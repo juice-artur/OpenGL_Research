@@ -95,27 +95,7 @@ bool Mesh::LoadFromObj(std::string filename)
     {
 
         GLuint textureID;
-        glGenTextures(1, &textureID);
-        glBindTexture(GL_TEXTURE_2D, textureID);
-
-        unsigned char whitePixel[] = {255, 255, 255, 255};
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, whitePixel);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        GLuint samplerID;
-        glGenSamplers(1, &samplerID);
-        glBindSampler(0, samplerID);
-
-        glSamplerParameteri(samplerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glSamplerParameteri(samplerID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glSamplerParameteri(samplerID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glSamplerParameteri(samplerID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        GenerateDefoultTexture(textureID, Color);
 
         Material newMaterial;
         newMaterial.diffuseTextureID = textureID;
@@ -141,6 +121,38 @@ Mesh::Mesh(std::string filename)
 void Mesh::SetColor(glm::vec4 Color)
 {
     this->Color = Color;
+    GLuint textureID;
+    GenerateDefoultTexture(textureID, Color);
+
+    Material newMaterial;
+    newMaterial.diffuseTextureID = textureID;
+
+    materials = newMaterial;
+}
+
+void Mesh::GenerateDefoultTexture(uint32_t& textureID, glm::vec4& Color)
+{
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    unsigned char whitePixel[] = {Color.r, Color.g, Color.b, Color.a};
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, whitePixel);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    GLuint samplerID;
+    glGenSamplers(1, &samplerID);
+    glBindSampler(0, samplerID);
+
+    glSamplerParameteri(samplerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glSamplerParameteri(samplerID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glSamplerParameteri(samplerID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glSamplerParameteri(samplerID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
 void Mesh::SetPosition(glm::vec3 Position)
