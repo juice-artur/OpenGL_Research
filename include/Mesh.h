@@ -31,8 +31,8 @@ public:
 
     unsigned int VAO, VBO;
 
-    bool LoadFromObj(const char* filename);
-    Mesh(const char* filename);
+    bool LoadFromObj(std::string  filename);
+    Mesh(std::string filename);
     void SetColor(glm::vec4 Color);
 
     void SetPosition(glm::vec3 Position);

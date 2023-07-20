@@ -7,7 +7,7 @@
 #include <stb_image.h>
 #include <format>
 
-bool Mesh::LoadFromObj(const char* filename)
+bool Mesh::LoadFromObj(std::string filename)
 {
     tinyobj::ObjReaderConfig reader_config;
     tinyobj::ObjReader reader;
@@ -77,13 +77,16 @@ bool Mesh::LoadFromObj(const char* filename)
     }
     if (!objMaterials.empty())
     {
+        size_t lastSlashPosition = filename.find_last_of('/');
+
+        std::string newPath = filename.substr(0, lastSlashPosition);
         for (const auto& material : objMaterials)
         {
             Material newMaterial;
-            newMaterial.diffuseTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.diffuse_texname));
-            newMaterial.normalTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.normal_texname));
-            newMaterial.metallicTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.metallic_texname));
-            newMaterial.roughnessTextureID = LoadTexture(std::format("{}/{}", "../resources/AirgunHaenel", material.roughness_texname));
+            newMaterial.diffuseTextureID = LoadTexture(std::format("{}/{}", newPath, material.diffuse_texname));
+            newMaterial.normalTextureID = LoadTexture(std::format("{}/{}", newPath, material.normal_texname));
+            newMaterial.metallicTextureID = LoadTexture(std::format("{}/{}", newPath, material.metallic_texname));
+            newMaterial.roughnessTextureID = LoadTexture(std::format("{}/{}", newPath, material.roughness_texname));
 
             materials = newMaterial;
         }
@@ -130,7 +133,7 @@ bool Mesh::LoadFromObj(const char* filename)
     return true;
 }
 
-Mesh::Mesh(const char* filename)
+Mesh::Mesh(std::string filename)
 {
     LoadFromObj(filename);
 }
