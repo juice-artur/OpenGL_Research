@@ -87,7 +87,7 @@ bool Mesh::LoadFromObj(std::string filename)
             newMaterial.normalTextureID = LoadTexture(std::format("{}/{}", newPath, material.normal_texname));
             newMaterial.metallicTextureID = LoadTexture(std::format("{}/{}", newPath, material.metallic_texname));
             newMaterial.roughnessTextureID = LoadTexture(std::format("{}/{}", newPath, material.roughness_texname));
-
+            newMaterial.ambientOcclusionTextureID = LoadTexture(std::format("{}/{}", newPath, material.ambient_texname));
             materials = newMaterial;
         }
     }
@@ -164,6 +164,12 @@ void Mesh::SetPosition(glm::vec3 Position)
 void Mesh::ScaleMesh(glm::vec3 Scale)
 {
     this->Scale = Scale;
+    ModelMatrix = CalculateModelMatrix();
+}
+
+void Mesh::RotateMesh(glm::vec3 Rotation)
+{
+    this->Rotation = Rotation;
     ModelMatrix = CalculateModelMatrix();
 }
 

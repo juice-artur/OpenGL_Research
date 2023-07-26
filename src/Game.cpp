@@ -18,8 +18,10 @@ void Game::Run()
         double CurrentTime = glfwGetTime();
         ProcessInput(WindowManager.GetWindow(), DeltaTime);
 
-        RenderManager.Render(
-            CurentScene.GetMeshes(), CurentScene.GetLights(), CurentScene.MainCamera.GetViewMatrix(), CurentScene.MainCamera.Position, DeltaTime);
+        CurentScene.Update(DeltaTime);
+
+        RenderManager.Render(CurentScene.GetMeshes(), CurentScene.GetLights(), CurentScene.MainCamera.GetViewMatrix(),
+            CurentScene.MainCamera.Position, DeltaTime);
 
         DeltaTime = (CurrentTime - PreviousTime) * 1000.0;
 
@@ -82,6 +84,7 @@ void Game::ProcessInput(GLFWwindow* window, double DeltaTime)
     {
         CurentScene.MainCamera.ProcessKeyboard(RIGHT, SPEED * DeltaTime / 1000);
     }
+
 }
 
 void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos)

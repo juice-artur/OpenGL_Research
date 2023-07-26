@@ -12,6 +12,7 @@ struct Material
     float normalTextureID;
     float metallicTextureID;
     float roughnessTextureID;
+    float ambientOcclusionTextureID;
 };
 
 struct Vertex
@@ -39,6 +40,7 @@ public:
 
     void SetPosition(glm::vec3 Position);
     void ScaleMesh(glm::vec3 Scale);
+    void RotateMesh(glm::vec3 Rotate);
     glm::mat4 GetModelMatrix();
     
 

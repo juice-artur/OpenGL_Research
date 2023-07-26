@@ -216,7 +216,7 @@ void RenderManager::Render(
     ImGui::Begin("FPS Graph", nullptr);
     ImGui::SetWindowSize(ImVec2(500, 150));
     ImGui::SetNextWindowPos(ImVec2(GLOBAL_CONSTANTS::SCREEN_WIDTH - 500, 0), ImGuiCond_Always);
-    ImGui::Text("Max: %.1f", DeltaTime);
+    ImGui::Text("DeltaTime: %.1f", DeltaTime);
     ImGui::End();
     ImGui::EndFrame();
 

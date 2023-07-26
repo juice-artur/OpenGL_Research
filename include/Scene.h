@@ -12,6 +12,7 @@ public:
     const std::vector<Mesh>& GetMeshes();
     const std::vector<Light>& GetLights();
     Camera MainCamera;
+    void Update(float DeltaTime);
 
 private:
     std::vector<Mesh> Meshes;
