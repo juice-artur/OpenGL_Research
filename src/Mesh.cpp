@@ -7,6 +7,29 @@
 #include <stb_image.h>
 #include <format>
 
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+{
+    this->vertices = vertices;
+    this->indices = indices;
+    for (auto tex : textures)
+    {
+        if (tex.type == "texture_diffuse")
+        {
+            materials.diffuseTextureID = tex.id;
+        }
+        else if (tex.type == "texture_specular")
+        {
+            
+        }
+        else if (tex.type == "texture_normal")
+        {
+            materials.normalTextureID = tex.id;
+        }
+    }
+
+     SetupMesh();
+}
+
 bool Mesh::LoadFromObj(std::string filename)
 {
     tinyobj::ObjReaderConfig reader_config;
@@ -188,6 +211,7 @@ void Mesh::SetupMesh()
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+
 
     // Bind Vertex Array Object and VBO in correct order
     glBindVertexArray(VAO);

@@ -34,6 +34,19 @@ target_link_libraries(${PROJECT_NAME} PRIVATE tinyobjloader)
 add_subdirectory(external/glm)
 target_link_libraries(${PROJECT_NAME} PRIVATE glm)
 
+set(ASSIMP_BUILD_TESTS OFF)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
+set(ASSIMP_INSTALL OFF)
+
+add_subdirectory(external/assimp)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set_target_properties(assimp PROPERTIES UNITY_BUILD OFF)
+  set_target_properties(assimp PROPERTIES ENABLE_PCH OFF)
+endif()
+
+target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
+
 set(IMGUI_INCLUDES
 	external/imgui/imgui.h
 	external/imgui/backends/imgui_impl_glfw.h

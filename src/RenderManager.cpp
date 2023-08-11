@@ -237,4 +237,7 @@ void RenderManager::DrawMesh(Mesh mesh, Material curentMaterial)
 
     glBindVertexArray(mesh.VAO);
     glDrawArrays(GL_TRIANGLES, 0, (GLsizei)mesh.vertices.size());
+
+
+    //glActiveTexture(GL_TEXTURE0);
 }

@@ -2,7 +2,7 @@
 #include <Mesh.h>
 #include <Camera.h>
 #include <Light.h>
-
+#include <Model.h>
 #ifndef SCENE_H
 #define SCENE_H
 class Scene

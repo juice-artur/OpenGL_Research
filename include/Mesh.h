@@ -14,6 +14,13 @@ struct Material
     float roughnessTextureID;
     float ambientOcclusionTextureID;
 };
+struct Texture
+{
+    unsigned int id;
+    std::string type;
+    std::string path;
+};
+
 
 struct Vertex
 {
@@ -27,6 +34,9 @@ class  Mesh
 public:
     std::vector<Vertex> vertices;
     Material materials;
+    std::vector<unsigned int> indices;
+
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
     glm::vec4 Color = {0.0f, 1.0f, 0.0f, 1.0f};
 
@@ -34,6 +44,7 @@ public:
 
     bool LoadFromObj(std::string  filename);
     Mesh(std::string filename);
+
     void SetColor(glm::vec4 Color);
 
     void GenerateDefoultTexture(uint32_t& textureID, glm::vec4& Color);
