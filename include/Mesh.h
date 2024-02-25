@@ -32,6 +32,7 @@ struct Vertex
 class  Mesh
 {
 public:
+    bool isWater = false;
     std::vector<Vertex> vertices;
     Material materials;
     std::vector<unsigned int> indices;

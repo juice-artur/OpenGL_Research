@@ -9,6 +9,7 @@
 bool RenderManager::StartUp(WindowManager& WindowManager)
 {
     this->Window = &WindowManager;
+    WaterPassShader = Shader("../resources/Shader/WaterPass.vert", "../resources/Shader/GeometryPass.frag");
     GeometryPassShader = Shader("../resources/Shader/GeometryPass.vert", "../resources/Shader/GeometryPass.frag");
     LightPassShader = Shader("../resources/Shader/LightPass.vert", "../resources/Shader/LightPass.frag");
     ShadowPassShader = Shader("../resources/Shader/ShadowPass.vert", "../resources/Shader/ShadowPass.frag",
@@ -99,22 +100,50 @@ void RenderManager::Render(
     glEnable(GL_DEPTH_TEST);
 
 
-            glm::mat4 projection =
+         glm::mat4 projection =
         glm::perspective(glm::radians(45.0f), (float)GLOBAL_CONSTANTS::SCREEN_WIDTH/ (float)GLOBAL_CONSTANTS::SCREEN_HEIGHT, 0.1f, 100.0f);
 
     GeometryPassShader.Use();
     GeometryPassShader.SetMat4("ViewMatrix", ViewMatrix);
     GeometryPassShader.SetMat4("ProjectionMatrix", projection);
 
+
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "GeometryPass");
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (auto currentMesh : Meshes)
     {
+
+        if (currentMesh.isWater)
+        {
+           continue;
+        }
+       
         GeometryPassShader.SetMat4("Model", currentMesh.GetModelMatrix());
         GeometryPassShader.SetVec4("Color", currentMesh.Color);
+        GeometryPassShader.SetInt("DiffuseTexture", 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+
         DrawMesh(currentMesh, currentMesh.materials);
     }
+
+    WaterPassShader.Use();
+    WaterPassShader.SetMat4("ViewMatrix", ViewMatrix);
+    WaterPassShader.SetMat4("ProjectionMatrix", projection);
+    for (auto currentMesh : Meshes)
+    {
+        if (currentMesh.isWater)
+        {
+            WaterPassShader.SetFloat("time", glfwGetTime());
+            WaterPassShader.SetMat4("Model", currentMesh.GetModelMatrix());
+            WaterPassShader.SetVec4("Color", currentMesh.Color);
+            glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+            DrawMesh(currentMesh, currentMesh.materials);
+        }
+
+
+    }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glPopDebugGroup();
 
@@ -230,8 +259,6 @@ void RenderManager::Render(
 
 void RenderManager::DrawMesh(Mesh mesh, Material curentMaterial)
 {
-    GeometryPassShader.Use();
-    GeometryPassShader.SetInt("DiffuseTexture", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, curentMaterial.diffuseTextureID);
 

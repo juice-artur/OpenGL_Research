@@ -23,6 +23,7 @@ private:
     unsigned int gPosition, gNormal, gColor, shadowCubemap;
     WindowManager* Window;
     Shader GeometryPassShader;
+    Shader WaterPassShader;
     Shader LightPassShader;
     Shader ShadowPassShader;
     void DrawMesh(Mesh mesh, Material curentMaterial);
